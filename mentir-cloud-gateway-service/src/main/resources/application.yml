@@ -1,0 +1,27 @@
+server:
+  port: 8083
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: fileOperationModule
+          uri: ${FILE_SERVICE:http://localhost:8081/}
+          predicates:
+            - Path=/files/**
+        - id: userModule
+          uri: ${USER_SERVICE:http://localhost:8082/}
+          predicates:
+            - Path=/users/**
+        - id: authModule
+          uri: ${SECURITY_SERVICE:http://localhost:8085/}
+          predicates:
+            - Path=/auth/**
+  main:
+    allow-bean-definition-overriding: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+myserver:
+  securityService: ${SECURITY_SERVICE:http://localhost:8085}

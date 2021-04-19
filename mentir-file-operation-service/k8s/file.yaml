@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-service
+  labels:
+    app: file-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-service
+  template:
+    metadata:
+      labels:
+        app: file-service
+    spec:
+      containers:
+        - name: file-service
+          image: tankietxm/file-service:1.0.0
+          ports:
+            - containerPort: 8081
+#          volumeMounts:
+#            - mountPath: /mentir-file-operation-service
+#              name: filerepo
+          env:
+            - name: EUREKA_SERVER
+              value: http://eureka-server:8761/eureka
+            - name: USER_SERVICE
+              value: http://user-service:8082/
+          imagePullPolicy: Always
+#      volumes:
+#        - name: filerepo
+#          hostPath:
+#            path: /mentir-file-operation-service
+#            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:
+    file-service
+  labels:
+    app: file-service
+spec:
+  selector:
+    app: file-service
+  ports:
+    - port: 8081
+  type: ClusterIP

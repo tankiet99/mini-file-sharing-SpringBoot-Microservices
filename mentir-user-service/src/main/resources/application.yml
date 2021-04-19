@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: mentir-user-service
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:1@cluster0.vmkt8.mongodb.net/mydb?retryWrites=true&w=majority
+#      authentication-database: admin
+#      username: root
+#      password: root
+#      database: userDB
+#      port: 27017
+#      host: localhost
+server:
+  port: 8082
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}

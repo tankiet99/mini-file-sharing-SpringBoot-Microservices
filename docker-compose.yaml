@@ -1,0 +1,67 @@
+version: '3'
+services:
+  eureka-server:
+    build:
+      context: mentir-eureka-server
+    ports:
+    - 8761:8761
+    networks:
+      - spring-microservice-network
+  gateway-service:
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://eureka-server:8761/eureka
+        -DSECURITY_SERVICE=http://security-service:8085/
+        -DUSER_SERVICE=http://user-service:8082/
+        -DFILE_SERVICE=http://file-service:8081/
+    build:
+      context: mentir-cloud-gateway-service
+    depends_on:
+      - eureka-server
+    ports:
+    - 8083:8083
+    networks:
+      - spring-microservice-network
+  security-service:
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://eureka-server:8761/eureka
+        -DUSER_SERVICE=http://user-service:8082/
+    build:
+      context: mentir-auth-service
+    depends_on:
+      - eureka-server
+    ports:
+    - 8085:8085
+    networks:
+      - spring-microservice-network
+  file-service:
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://eureka-server:8761/eureka
+        -DUSER_SERVICE=http://user-service:8082/
+    build:
+      context: mentir-file-operation-service
+    depends_on:
+      - eureka-server
+    ports:
+    - 8081:8081
+#    volumes:
+#    - "./mentir-file-operation-service:/mentir-file-operation-service:rw"
+    networks:
+      - spring-microservice-network
+  user-service:
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://eureka-server:8761/eureka
+    build:
+      context: mentir-user-service
+    depends_on:
+      - eureka-server
+    ports:
+      - 8082:8082
+    networks:
+      - spring-microservice-network
+networks:
+  spring-microservice-network:
+    external: true

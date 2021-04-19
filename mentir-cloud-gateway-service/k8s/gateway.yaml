@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  labels:
+    app: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service
+          image: tankietxm/gateway-service:1.0.0
+          ports:
+            - containerPort: 8083
+          env:
+            - name: EUREKA_SERVER
+              value: http://eureka-server:8761/eureka
+            - name: USER_SERVICE
+              value: http://user-service:8082/
+            - name: SECURITY_SERVICE
+              value: http://security-service:8085/
+            - name: FILE_SERVICE
+              value: http://file-service:8081/
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:
+    gateway-service
+  labels:
+    app: gateway-service
+spec:
+  selector:
+    app: gateway-service
+  ports:
+    - port: 80
+      targetPort: 8083
+  type: LoadBalancer

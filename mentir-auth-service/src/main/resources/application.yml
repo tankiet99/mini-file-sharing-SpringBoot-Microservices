@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: mentir-secure-service
+security:
+  jwt:
+    token:
+      secret-key: tankiet
+      expire-length: 1000000 # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds
+server:
+  port: 8085
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+feign:
+  client:
+    url:
+      userService: ${USER_SERVICE:http://localhost:8082/}
